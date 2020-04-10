@@ -1,0 +1,20 @@
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from rest_framework.generics import *
+from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+
+class Image(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = []  # it will check if the user is authenticated or not
+    authentication_classes = []  # it will authenticate the person by JSON web token
+
+    def post(self, request):
+        print(request.data)
+        f1 = request.FILES["image"]
+        path = default_storage.save('tmp/' + f1.name, ContentFile(f1.read()))
+
+        return JsonResponse({"status":"done"})
+
+urls.py--> path('im/',views.Image.as_view())
